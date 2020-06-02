@@ -47,6 +47,7 @@ type OnfidoClient interface {
 	ListWebhooks() *WebhookRefIter
 	PickAddresses(postcode string) *PickerIter
 	GetResource(ctx context.Context, href string, v interface{}) error
+	Token() Token
 
 	newRequest(method, uri string, body io.Reader) (*http.Request, error)
 	do(ctx context.Context, req *http.Request, v interface{}) (*http.Response, error)
@@ -112,6 +113,8 @@ func (t Token) Prod() bool {
 	return !strings.HasPrefix(string(t), "test_") &&
 		!strings.HasPrefix(string(t), "api_sandbox.")
 }
+
+func (c *client) Token() Token { return c.token }
 
 // NewClientFromEnv creates a new Onfido client using configuration
 // from environment variables.

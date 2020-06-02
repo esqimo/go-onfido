@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	onfido "github.com/uw-labs/go-onfido"
+	"github.com/esqimo/go-onfido"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	if client.Token.Prod() {
+	if client.Token().Prod() {
 		panic("onfido token is only for production use")
 	}
 

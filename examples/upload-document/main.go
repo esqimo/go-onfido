@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/uw-labs/go-onfido"
+	"github.com/esqimo/go-onfido"
 )
 
 func main() {
