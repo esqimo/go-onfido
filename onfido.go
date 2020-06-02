@@ -47,9 +47,6 @@ type OnfidoClient interface {
 	PickAddresses(postcode string) *PickerIter
 	GetResource(ctx context.Context, href string, v interface{}) error
 	Token() Token
-
-	newRequest(method, uri string, body io.Reader) (*http.Request, error)
-	do(ctx context.Context, req *http.Request, v interface{}) (*http.Response, error)
 }
 
 // Client represents an Onfido API client
