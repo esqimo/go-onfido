@@ -217,7 +217,7 @@ func getDefaultDocument() *onfido.DocumentRequest {
 	}
 }
 
-func getOnfidoClient() *onfido.Client {
+func getOnfidoClient() *onfido.client {
 	if *onfidoToken == "" {
 		panic("onfido token not set")
 	}

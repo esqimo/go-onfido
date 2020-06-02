@@ -62,7 +62,7 @@ type Reports struct {
 
 // GetReport retrieves a report for the provided check by its ID.
 // see https://documentation.onfido.com/?shell#retrieve-report
-func (c *Client) GetReport(ctx context.Context, checkID, id string) (*Report, error) {
+func (c *client) GetReport(ctx context.Context, checkID, id string) (*Report, error) {
 	req, err := c.newRequest("GET", "/checks/"+checkID+"/reports/"+id, nil)
 	if err != nil {
 		return nil, err
@@ -75,7 +75,7 @@ func (c *Client) GetReport(ctx context.Context, checkID, id string) (*Report, er
 
 // ResumeReport resumes a paused report by its ID.
 // see https://documentation.onfido.com/?shell#resume-report
-func (c *Client) ResumeReport(ctx context.Context, checkID, id string) error {
+func (c *client) ResumeReport(ctx context.Context, checkID, id string) error {
 	req, err := c.newRequest("POST", "/checks/"+checkID+"/reports/"+id+"/resume", nil)
 	if err != nil {
 		return err
@@ -87,7 +87,7 @@ func (c *Client) ResumeReport(ctx context.Context, checkID, id string) error {
 
 // CancelReport cancels a report by its ID.
 // see https://documentation.onfido.com/?shell#cancel-report
-func (c *Client) CancelReport(ctx context.Context, checkID, id string) error {
+func (c *client) CancelReport(ctx context.Context, checkID, id string) error {
 	req, err := c.newRequest("POST", "/checks/"+checkID+"/reports/"+id+"/cancel", nil)
 	if err != nil {
 		return err
@@ -109,7 +109,7 @@ func (i *ReportIter) Report() *Report {
 
 // ListReports retrieves the list of reports for the provided check.
 // see https://documentation.onfido.com/?shell#list-reports
-func (c *Client) ListReports(checkID string) *ReportIter {
+func (c *client) ListReports(checkID string) *ReportIter {
 	handler := func(body []byte) ([]interface{}, error) {
 		var r Reports
 		if err := json.Unmarshal(body, &r); err != nil {

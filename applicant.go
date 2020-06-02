@@ -58,7 +58,7 @@ type Applicant struct {
 
 // CreateApplicant creates a new applicant.
 // see https://documentation.onfido.com/?shell#create-applicant
-func (c *Client) CreateApplicant(ctx context.Context, a Applicant) (*Applicant, error) {
+func (c *client) CreateApplicant(ctx context.Context, a Applicant) (*Applicant, error) {
 	jsonStr, err := json.Marshal(a)
 	if err != nil {
 		return nil, err
@@ -76,7 +76,7 @@ func (c *Client) CreateApplicant(ctx context.Context, a Applicant) (*Applicant, 
 
 // DeleteApplicant deletes an applicant by its id.
 // see https://documentation.onfido.com/?shell#delete-applicant
-func (c *Client) DeleteApplicant(ctx context.Context, id string) error {
+func (c *client) DeleteApplicant(ctx context.Context, id string) error {
 	req, err := c.newRequest("DELETE", "/applicants/"+id, nil)
 	if err != nil {
 		return err
@@ -87,7 +87,7 @@ func (c *Client) DeleteApplicant(ctx context.Context, id string) error {
 
 // GetApplicant retrieves an applicant by its id.
 // see https://documentation.onfido.com/?shell#retrieve-applicant
-func (c *Client) GetApplicant(ctx context.Context, id string) (*Applicant, error) {
+func (c *client) GetApplicant(ctx context.Context, id string) (*Applicant, error) {
 	req, err := c.newRequest("GET", "/applicants/"+id, nil)
 	if err != nil {
 		return nil, err
@@ -110,7 +110,7 @@ func (i *ApplicantIter) Applicant() *Applicant {
 
 // ListApplicants retrieves the list of applicants.
 // see https://documentation.onfido.com/?shell#list-applicants
-func (c *Client) ListApplicants() *ApplicantIter {
+func (c *client) ListApplicants() *ApplicantIter {
 	handler := func(body []byte) ([]interface{}, error) {
 		var a Applicants
 		if err := json.Unmarshal(body, &a); err != nil {
@@ -133,7 +133,7 @@ func (c *Client) ListApplicants() *ApplicantIter {
 
 // UpdateApplicant updates an applicant by its id.
 // see https://documentation.onfido.com/?shell#update-applicant
-func (c *Client) UpdateApplicant(ctx context.Context, a Applicant) (*Applicant, error) {
+func (c *client) UpdateApplicant(ctx context.Context, a Applicant) (*Applicant, error) {
 	if a.ID == "" {
 		return nil, errors.New("invalid applicant id")
 	}

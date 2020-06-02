@@ -45,7 +45,7 @@ func (i *PickerIter) Address() *Address {
 
 // PickAddresses retrieves the list of addresses matched against the provided postcode.
 // see https://documentation.onfido.com/?shell#address-picker
-func (c *Client) PickAddresses(postcode string) *PickerIter {
+func (c *client) PickAddresses(postcode string) *PickerIter {
 	if postcode == "" {
 		return &PickerIter{&iter{
 			err: ErrEmptyPostcode,

@@ -88,7 +88,7 @@ type Checks struct {
 
 // CreateCheck creates a new check for the provided applicant.
 // see https://documentation.onfido.com/?shell#create-check
-func (c *Client) CreateCheck(ctx context.Context, applicantID string, cr CheckRequest) (*Check, error) {
+func (c *client) CreateCheck(ctx context.Context, applicantID string, cr CheckRequest) (*Check, error) {
 	jsonStr, err := json.Marshal(cr)
 	if err != nil {
 		return nil, err
@@ -106,7 +106,7 @@ func (c *Client) CreateCheck(ctx context.Context, applicantID string, cr CheckRe
 
 // GetCheck retrieves a check for the provided applicant by its ID.
 // see https://documentation.onfido.com/?shell#retrieve-check
-func (c *Client) GetCheck(ctx context.Context, applicantID, id string) (*CheckRetrieved, error) {
+func (c *client) GetCheck(ctx context.Context, applicantID, id string) (*CheckRetrieved, error) {
 	req, err := c.newRequest("GET", "/applicants/"+applicantID+"/checks/"+id, nil)
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func (c *Client) GetCheck(ctx context.Context, applicantID, id string) (*CheckRe
 // the Check's Reports expanded within the returned Check object.
 // see https://documentation.onfido.com/?shell#retrieve-check (Shell) but refer to the JSON
 // response object for https://documentation.onfido.com/?php#check-object (PHP) for the expanded contents.
-func (c *Client) GetCheckExpanded(ctx context.Context, applicantID, id string) (*Check, error) {
+func (c *client) GetCheckExpanded(ctx context.Context, applicantID, id string) (*Check, error) {
 	// Get the CheckRetrieved object. This only includes Report IDs, not the expanded Report objects.
 	chkRetrieved, err := c.GetCheck(ctx, applicantID, id)
 	if err != nil {
@@ -158,7 +158,7 @@ func (c *Client) GetCheckExpanded(ctx context.Context, applicantID, id string) (
 
 // ResumeCheck resumes a paused check by its ID.
 // see https://documentation.onfido.com/?shell#resume-check
-func (c *Client) ResumeCheck(ctx context.Context, id string) (*Check, error) {
+func (c *client) ResumeCheck(ctx context.Context, id string) (*Check, error) {
 	req, err := c.newRequest("POST", "/checks/"+id+"/resume", nil)
 	if err != nil {
 		return nil, err
@@ -181,7 +181,7 @@ func (i *CheckIter) Check() *Check {
 
 // ListChecks retrieves the list of checks for the provided applicant.
 // see https://documentation.onfido.com/?shell#list-checks
-func (c *Client) ListChecks(applicantID string) *CheckIter {
+func (c *client) ListChecks(applicantID string) *CheckIter {
 	handler := func(body []byte) ([]interface{}, error) {
 		var r Checks
 		if err := json.Unmarshal(body, &r); err != nil {

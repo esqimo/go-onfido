@@ -14,7 +14,7 @@ type SdkToken struct {
 }
 
 // NewSdkToken returns a JWT token to used by the Javascript SDK
-func (c *Client) NewSdkToken(ctx context.Context, id, referrer string) (*SdkToken, error) {
+func (c *client) NewSdkToken(ctx context.Context, id, referrer string) (*SdkToken, error) {
 	t := &SdkToken{
 		ApplicantID: id,
 		Referrer:    referrer,

@@ -93,7 +93,7 @@ func createFormFile(writer *multipart.Writer, fieldname string, file io.ReadSeek
 
 // UploadDocument uploads a document for the provided applicant.
 // see https://documentation.onfido.com/?shell#upload-document
-func (c *Client) UploadDocument(ctx context.Context, applicantID string, dr DocumentRequest) (*Document, error) {
+func (c *client) UploadDocument(ctx context.Context, applicantID string, dr DocumentRequest) (*Document, error) {
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
 
@@ -127,7 +127,7 @@ func (c *Client) UploadDocument(ctx context.Context, applicantID string, dr Docu
 
 // GetDocument retrieves a single document for the provided applicant by its ID.
 // see https://documentation.onfido.com/?shell#retrieve-document
-func (c *Client) GetDocument(ctx context.Context, applicantID, id string) (*Document, error) {
+func (c *client) GetDocument(ctx context.Context, applicantID, id string) (*Document, error) {
 	req, err := c.newRequest("GET", "/applicants/"+applicantID+"/documents/"+id, nil)
 	if err != nil {
 		return nil, err
@@ -150,7 +150,7 @@ func (i *DocumentIter) Document() *Document {
 
 // ListDocuments retrieves the list of documents for the provided applicant.
 // see https://documentation.onfido.com/?shell#list-documents
-func (c *Client) ListDocuments(applicantID string) *DocumentIter {
+func (c *client) ListDocuments(applicantID string) *DocumentIter {
 	handler := func(body []byte) ([]interface{}, error) {
 		var d Documents
 		if err := json.Unmarshal(body, &d); err != nil {

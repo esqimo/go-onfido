@@ -57,7 +57,7 @@ type WebhookRefs struct {
 
 // CreateWebhook register a new webhook.
 // see https://documentation.onfido.com/#register-webhook
-func (c *Client) CreateWebhook(ctx context.Context, wr WebhookRefRequest) (*WebhookRef, error) {
+func (c *client) CreateWebhook(ctx context.Context, wr WebhookRefRequest) (*WebhookRef, error) {
 	jsonStr, err := json.Marshal(wr)
 	if err != nil {
 		return nil, err
@@ -85,7 +85,7 @@ func (i *WebhookRefIter) WebhookRef() *WebhookRef {
 
 // ListWebhooks retrieves the list of webhooks.
 // see https://documentation.onfido.com/#list-webhooks
-func (c *Client) ListWebhooks() *WebhookRefIter {
+func (c *client) ListWebhooks() *WebhookRefIter {
 	handler := func(body []byte) ([]interface{}, error) {
 		var r WebhookRefs
 		if err := json.Unmarshal(body, &r); err != nil {
