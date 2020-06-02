@@ -77,8 +77,8 @@ func TestNewClientFromEnv_EnvSet(t *testing.T) {
 	if err != nil {
 		t.Fatal()
 	}
-	if client.GetToken().String() != expectedToken {
-		t.Fatalf("expected token to be `%s` but got `%s`", expectedToken, client.GetToken())
+	if client.Token().String() != expectedToken {
+		t.Fatalf("expected token to be `%s` but got `%s`", expectedToken, client.Token())
 	}
 }
 

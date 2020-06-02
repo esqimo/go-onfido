@@ -22,7 +22,6 @@ const (
 )
 
 type OnfidoClient interface {
-	GetToken() Token
 	SetHTTPClient(client HTTPRequester)
 	NewSdkToken(ctx context.Context, id, referrer string) (*SdkToken, error)
 	GetReport(ctx context.Context, checkID, id string) (*Report, error)
@@ -62,10 +61,6 @@ type client struct {
 
 func (c *client) SetHTTPClient(client HTTPRequester) {
 	c.httpClient = client
-}
-
-func (c *client) GetToken() Token {
-	return c.token
 }
 
 var _ OnfidoClient = &client{}
