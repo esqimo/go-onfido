@@ -22,6 +22,11 @@ const (
 )
 
 type OnfidoClient interface {
+	GetEndpoint() string
+	GetHTTPClient() HTTPRequester
+	SetHTTPClient(client HTTPRequester)
+	GetToken() Token
+
 	NewSdkToken(ctx context.Context, id, referrer string) (*SdkToken, error)
 	GetReport(ctx context.Context, checkID, id string) (*Report, error)
 	ResumeReport(ctx context.Context, checkID, id string) error
@@ -38,20 +43,39 @@ type OnfidoClient interface {
 	UpdateApplicant(ctx context.Context, a Applicant) (*Applicant, error)
 	CreateCheck(ctx context.Context, applicantID string, cr CheckRequest) (*Check, error)
 	GetCheck(ctx context.Context, applicantID, id string) (*CheckRetrieved, error)
-	GetCheckFromHref(ctx context.Context, href string) (*Check, error)
 	GetCheckExpanded(ctx context.Context, applicantID, id string) (*Check, error)
 	ResumeCheck(ctx context.Context, id string) (*Check, error)
 	ListChecks(applicantID string) *CheckIter
 	CreateWebhook(ctx context.Context, wr WebhookRefRequest) (*WebhookRef, error)
 	ListWebhooks() *WebhookRefIter
 	PickAddresses(postcode string) *PickerIter
+	GetResource(ctx context.Context, href string, v interface{}) error
+
+	newRequest(method, uri string, body io.Reader) (*http.Request, error)
+	do(ctx context.Context, req *http.Request, v interface{}) (*http.Response, error)
 }
 
 // Client represents an Onfido API client
 type client struct {
-	Endpoint   string
-	HTTPClient HTTPRequester
-	Token      Token
+	endpoint   string
+	httpClient HTTPRequester
+	token      Token
+}
+
+func (c *client) SetHTTPClient(client HTTPRequester) {
+	c.httpClient = client
+}
+
+func (c *client) GetEndpoint() string {
+	return c.endpoint
+}
+
+func (c *client) GetHTTPClient() HTTPRequester {
+	return c.httpClient
+}
+
+func (c *client) GetToken() Token {
+	return c.token
 }
 
 var _ OnfidoClient = &client{}
@@ -113,9 +137,9 @@ func NewClientFromEnv() (OnfidoClient, error) {
 // NewClient creates a new Onfido client.
 func NewClient(token string) OnfidoClient {
 	return &client{
-		Endpoint:   DefaultEndpoint,
-		HTTPClient: http.DefaultClient,
-		Token:      Token(token),
+		endpoint:   DefaultEndpoint,
+		httpClient: http.DefaultClient,
+		token:      Token(token),
 	}
 }
 
@@ -124,7 +148,7 @@ func (c *client) newRequest(method, uri string, body io.Reader) (*http.Request, 
 		if !strings.HasPrefix(uri, "/") {
 			uri = "/" + uri
 		}
-		uri = c.Endpoint + uri
+		uri = c.endpoint + uri
 	}
 
 	req, err := http.NewRequest(method, uri, body)
@@ -134,7 +158,7 @@ func (c *client) newRequest(method, uri string, body io.Reader) (*http.Request, 
 
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", "Go-Onfido/"+ClientVersion)
-	req.Header.Set("Authorization", "Token token="+c.Token.String())
+	req.Header.Set("Authorization", "Token token="+c.token.String())
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
@@ -144,7 +168,7 @@ func (c *client) newRequest(method, uri string, body io.Reader) (*http.Request, 
 
 func (c *client) do(ctx context.Context, req *http.Request, v interface{}) (*http.Response, error) {
 	req = req.WithContext(ctx)
-	resp, err := c.HTTPClient.Do(req)
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		select {
 		case <-ctx.Done():

@@ -77,8 +77,8 @@ func TestNewClientFromEnv_EnvSet(t *testing.T) {
 	if err != nil {
 		t.Fatal()
 	}
-	if client.Token.String() != expectedToken {
-		t.Fatalf("expected token to be `%s` but got `%s`", expectedToken, client.Token)
+	if client.GetToken().String() != expectedToken {
+		t.Fatalf("expected token to be `%s` but got `%s`", expectedToken, client.GetToken())
 	}
 }
 
@@ -133,7 +133,7 @@ func TestDo_RequestErrors(t *testing.T) {
 	expected := errors.New("TestJson_RequestErrors")
 
 	client := NewClient("123")
-	client.HTTPClient = &stubbedHTTPClient{err: expected}
+	client.SetHTTPClient(&stubbedHTTPClient{err: expected})
 
 	_, err := client.do(context.Background(), &http.Request{}, nil)
 	if err == nil {
@@ -146,7 +146,7 @@ func TestDo_RequestErrors(t *testing.T) {
 
 func TestDo_InvalidStatusCode(t *testing.T) {
 	client := NewClient("123")
-	client.HTTPClient = &stubbedHTTPClient{resp: &http.Response{StatusCode: http.StatusForbidden}}
+	client.SetHTTPClient(&stubbedHTTPClient{resp: &http.Response{StatusCode: http.StatusForbidden}})
 
 	_, err := client.do(context.Background(), &http.Request{}, nil)
 	if err == nil {
@@ -170,7 +170,7 @@ func TestDo_InvalidStatusCode_InvalidJsonParsed(t *testing.T) {
 	resp.Body = ioutil.NopCloser(bytes.NewBuffer([]byte("hello")))
 
 	client := NewClient("123")
-	client.HTTPClient = &stubbedHTTPClient{resp: resp}
+	client.SetHTTPClient(&stubbedHTTPClient{resp: resp})
 
 	_, err := client.do(context.Background(), &http.Request{}, &Applicant{})
 	if err == nil {
@@ -211,7 +211,7 @@ func TestDo_InvalidStatusCode_JsonParsed(t *testing.T) {
 	resp.Body = ioutil.NopCloser(bytes.NewBuffer(encodedErr))
 
 	client := NewClient("123")
-	client.HTTPClient = &stubbedHTTPClient{resp: resp}
+	client.SetHTTPClient(&stubbedHTTPClient{resp: resp})
 
 	_, err = client.do(context.Background(), &http.Request{}, &Applicant{})
 	if err == nil {
@@ -235,7 +235,7 @@ func TestDo_InvalidJsonResponse(t *testing.T) {
 	resp.Body = ioutil.NopCloser(bytes.NewBuffer([]byte("hello")))
 
 	client := NewClient("123")
-	client.HTTPClient = &stubbedHTTPClient{resp: resp}
+	client.SetHTTPClient(&stubbedHTTPClient{resp: resp})
 
 	_, err := client.do(context.Background(), &http.Request{}, &Applicant{})
 	if err == nil {
