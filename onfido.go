@@ -22,8 +22,6 @@ const (
 )
 
 type OnfidoClient interface {
-	GetEndpoint() string
-	GetHTTPClient() HTTPRequester
 	SetHTTPClient(client HTTPRequester)
 	GetToken() Token
 
@@ -64,14 +62,6 @@ type client struct {
 
 func (c *client) SetHTTPClient(client HTTPRequester) {
 	c.httpClient = client
-}
-
-func (c *client) GetEndpoint() string {
-	return c.endpoint
-}
-
-func (c *client) GetHTTPClient() HTTPRequester {
-	return c.httpClient
 }
 
 func (c *client) GetToken() Token {
