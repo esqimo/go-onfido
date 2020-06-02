@@ -22,9 +22,8 @@ const (
 )
 
 type OnfidoClient interface {
-	SetHTTPClient(client HTTPRequester)
 	GetToken() Token
-
+	SetHTTPClient(client HTTPRequester)
 	NewSdkToken(ctx context.Context, id, referrer string) (*SdkToken, error)
 	GetReport(ctx context.Context, checkID, id string) (*Report, error)
 	ResumeReport(ctx context.Context, checkID, id string) error
