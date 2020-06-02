@@ -21,7 +21,7 @@ const (
 	TokenEnv        = "ONFIDO_TOKEN"
 )
 
-type Client interface {
+type OnfidoClient interface {
 	NewSdkToken(ctx context.Context, id, referrer string) (*SdkToken, error)
 	GetReport(ctx context.Context, checkID, id string) (*Report, error)
 	ResumeReport(ctx context.Context, checkID, id string) error
@@ -54,7 +54,7 @@ type client struct {
 	Token      Token
 }
 
-var _ Client = &client{}
+var _ OnfidoClient = &client{}
 
 // HTTPRequester represents an HTTP requester
 type HTTPRequester interface {
@@ -102,7 +102,7 @@ func (t Token) Prod() bool {
 
 // NewClientFromEnv creates a new Onfido client using configuration
 // from environment variables.
-func NewClientFromEnv() (Client, error) {
+func NewClientFromEnv() (OnfidoClient, error) {
 	token := os.Getenv(TokenEnv)
 	if token == "" {
 		return nil, fmt.Errorf("onfido token not found in environmental variable `%s`", TokenEnv)
@@ -111,7 +111,7 @@ func NewClientFromEnv() (Client, error) {
 }
 
 // NewClient creates a new Onfido client.
-func NewClient(token string) Client {
+func NewClient(token string) OnfidoClient {
 	return &client{
 		Endpoint:   DefaultEndpoint,
 		HTTPClient: http.DefaultClient,
