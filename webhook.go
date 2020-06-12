@@ -2,7 +2,7 @@ package onfido
 
 import (
 	"crypto/hmac"
-	"crypto/sha1"
+	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
@@ -26,6 +26,7 @@ const (
 
 // Webhook errors
 var (
+	ErrMissingWebhookSignature = errors.New("invalid request, missing signature")
 	ErrInvalidWebhookSignature = errors.New("invalid request, payload hash doesn't match signature")
 	ErrMissingWebhookToken     = errors.New("webhook token not found in environmental variable")
 )
@@ -69,7 +70,7 @@ func NewWebhook(token string) Webhook {
 
 // ValidateSignature validates the request body against the signature header.
 func (wh *webhook) ValidateSignature(body []byte, signature string) error {
-	mac := hmac.New(sha1.New, []byte(wh.Token))
+	mac := hmac.New(sha256.New, []byte(wh.Token))
 	if _, err := mac.Write(body); err != nil {
 		return err
 	}
@@ -86,6 +87,10 @@ func (wh *webhook) ValidateSignature(body []byte, signature string) error {
 // it as WebhookRequest if the request signature is valid.
 func (wh *webhook) ParseFromRequest(req *http.Request) (*WebhookRequest, error) {
 	signature := req.Header.Get(WebhookSignatureHeader)
+	if signature == "" {
+		return nil, ErrMissingWebhookSignature
+	}
+
 	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		return nil, err
