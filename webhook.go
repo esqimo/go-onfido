@@ -27,6 +27,7 @@ const (
 // Webhook errors
 var (
 	ErrInvalidWebhookSignature = errors.New("invalid request, payload hash doesn't match signature")
+	ErrMissingWebhookSignature = errors.New("invalid request, missing signature")
 	ErrMissingWebhookToken     = errors.New("webhook token not found in environmental variable")
 )
 
@@ -87,7 +88,7 @@ func (wh *webhook) ValidateSignature(body []byte, signature string) error {
 func (wh *webhook) ParseFromRequest(req *http.Request) (*WebhookRequest, error) {
 	signature := req.Header.Get(WebhookSignatureHeader)
 	if signature == "" {
-		return nil, errors.New("invalid request, missing signature")
+		return nil, ErrMissingWebhookSignature
 	}
 
 	body, err := ioutil.ReadAll(req.Body)
